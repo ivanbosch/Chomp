@@ -1,0 +1,61 @@
+body {
+    background-color: lightgrey;
+}
+p {
+    font-size: 30px;
+}
+.center {
+    /*margin: auto;
+    width: 50%;
+    padding: 10px;
+    padding-left: 50px;*/
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    /* bring your own prefixes */
+    transform: translate(-50%, -50%) scale(.8);
+}
+.board{
+    border: 1px solid black;
+    background: black;
+    height: 417px;
+    width: 626px;
+    /*margin: auto;
+    padding: 10px;*/
+}
+.cell {
+    border: solid #5a2d0c;
+    background: #5a2d0c;
+    height: 100px;
+    width: 100px;
+    display: inline-block;
+    margin: 0;
+    transition-duration: 0.4s;
+    cursor: pointer;
+}
+
+.empty_cell {
+    background: black;
+    height: 100px;
+    width: 100px;
+    margin: 0;
+}
+
+.cell:hover {
+    border: solid yellow;
+}
+
+.poison_cell {
+    border: solid purple;
+    background: purple;
+    height: 100px;
+    width: 100px;
+    display: inline-block;
+    margin: 0;
+    transition-duration: 0.4s;
+    cursor: pointer;
+}
+
+.poison_cell:hover{
+    border: solid red;
+}

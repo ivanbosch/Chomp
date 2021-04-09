@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel = "stylesheet" href="css/styles.css">
+    <script type="text/javascript" src = "js/board.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
+    <script type="text/javascript" src = "js/edit-board.js"></script>
+    <style>
+    </style>
+    <title>Chomp</title>
+</head>
+<body>
+ 
+  <div id = "main" class="center">
+      <p>Broken chomp...</p>
+      <div id = "bar" class = "board">
+          <table id = "chompBoard">
+              <tr id = "r1"><td id = "c1"><button class="poison_cell"></button></td>
+              <td id = "c2"><button class="cell" onclick="blockRemoval('c2');sendTransformation();"></button></td>
+              <td id = "c3"><button class="cell" onclick="blockRemoval('c3');sendTransformation();"></button></td>
+              <td id = "c4"><button class="cell" onclick="blockRemoval('c4');sendTransformation();"></button></td>
+              <td id = "c5"><button class="cell" onclick="blockRemoval('c5');sendTransformation();"></button></td>
+              <td id = "c6"><button class="cell" onclick="blockRemoval('c6');sendTransformation();"></button></td></tr>
+              <script>
+                  drawBoard();
+              </script>
+          </table>
+      </div>
+  </div>
+
+  <script>
+
+    const socket = io("http://localhost:3000");
+
+    socket.on('connection');
+
+    socket.on('transformation', (data) => {
+        document.querySelector('table').innerHTML = data;
+    });
+
+    const sendTransformation = () => {
+        console.log("I Transformed something");
+        const move = document.getElementById("chompBoard").innerHTML;
+        socket.emit('transformation', move)
+    }
+
+  </script>
+</body>
+
+</html>
