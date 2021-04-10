@@ -7,32 +7,41 @@
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
     <script type="text/javascript" src = "js/edit-board.js"></script>
-    <style>
-    </style>
     <title>Chomp</title>
 </head>
 <body>
- 
-  <div id = "main" class="center">
-      <p>Broken chomp...</p>
-      <div id = "bar" class = "board">
-          <table id = "chompBoard">
-              <tr id = "r1"><td id = "c1"><button class="poison_cell"></button></td>
-              <td id = "c2"><button class="cell" onclick="blockRemoval('c2');sendTransformation();"></button></td>
-              <td id = "c3"><button class="cell" onclick="blockRemoval('c3');sendTransformation();"></button></td>
-              <td id = "c4"><button class="cell" onclick="blockRemoval('c4');sendTransformation();"></button></td>
-              <td id = "c5"><button class="cell" onclick="blockRemoval('c5');sendTransformation();"></button></td>
-              <td id = "c6"><button class="cell" onclick="blockRemoval('c6');sendTransformation();"></button></td></tr>
-              <script>
-                  drawBoard();
-              </script>
-          </table>
-      </div>
-  </div>
+    <div id="login"> <!--Login related stuff -->
+        <input id="username" type="text" placeholder="Select a username..">
+        <button onclick="onUsernameSelection()">Log in</button>
+    </div>
 
+    <div id="roomSelector" hidden>
+        <input id="roomName" type="text" placeholder="Choose a room">
+        <button onclick="join()">Join</button>
+    </div>
+    
+
+    <div id = "main" class="center" hidden> <!--Board related stuff -->
+        <div id = "bar" class = "board">
+            <table id = "chompBoard">
+                <tr id = "r1"><td id = "c1"><button class="poison_cell"></button></td>
+                <td id = "c2"><button class="cell" onclick="blockRemoval('c2');sendTransformation();"></button></td>
+                <td id = "c3"><button class="cell" onclick="blockRemoval('c3');sendTransformation();"></button></td>
+                <td id = "c4"><button class="cell" onclick="blockRemoval('c4');sendTransformation();"></button></td>
+                <td id = "c5"><button class="cell" onclick="blockRemoval('c5');sendTransformation();"></button></td>
+                <td id = "c6"><button class="cell" onclick="blockRemoval('c6');sendTransformation();"></button></td></tr>
+                <script>
+                    drawBoard();
+                </script>
+            </table>
+        </div>
+    </div>
   <script>
 
-    const socket = io("http://localhost:3000");
+    socket = io("http://localhost:3000", {autoConnect: false});
+
+    var usernameAlreadySelected = false;
+    var room;
 
     socket.on('connection');
 
@@ -40,12 +49,28 @@
         document.querySelector('table').innerHTML = data;
     });
 
+    socket.on("connection", )
+
     const sendTransformation = () => {
-        console.log("I Transformed something");
         const move = document.getElementById("chompBoard").innerHTML;
-        socket.emit('transformation', move)
+        socket.emit('transformation', {room, move});
     }
 
+    function join() {
+        room = document.getElementById("roomName").value
+        socket.emit('joinRoom', room);
+    }
+
+    function onUsernameSelection() {
+            let userName = document.getElementById("username").value;
+            usernameAlreadySelected = true;
+            socket.auth = { userName };
+            socket.connect();
+            document.getElementById("login").hidden = true;
+            document.getElementById("main").hidden = false;
+            document.getElementById("roomSelector").hidden = false;
+        
+    }
   </script>
 </body>
 
