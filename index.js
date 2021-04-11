@@ -5,6 +5,8 @@ const io = require('socket.io')(server, {
   cors: { origin: "*"}
 });
 
+var rooms = new Map()
+
 //Set static files
 app.use(express.static('src'))
 
@@ -27,13 +29,26 @@ io.on('connection', (socket) => {
 
   //The server receives that a user joined a room
   socket.on("joinRoom", ({room, username}) => {
-    console.log("A user just joined: " + room);
-    socket.join(room);
-    socket.to(room).emit('opponentJoined', username);
+    if (rooms.has(room)) {
+      if (rooms.get(room) === 2) {
+        console.log("The room is full");
+      } else {
+        console.log("A user just joined: " + room);
+        socket.join(room);
+        socket.to(room).emit('opponentJoined', username);
+        rooms.set(room, 2);
+      }
+    } else {
+      rooms.set(room, 1)
+      console.log("A user just joined: " + room);
+      socket.join(room);
+      socket.to(room).emit('opponentJoined', username);
+    }
   })
 
   socket.on("leaveRoom", (room) => {
-    console.log("Someone left the room")
+    rooms.set(room, rooms.get(room)-1);
+    console.log("Someone left the room");
     socket.leave(room);
   })
 
