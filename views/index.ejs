@@ -4,9 +4,9 @@
     <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel = "stylesheet" href="css/styles.css">
     <script type="text/javascript" src = "js/board.js"></script>
+    <script type="text/javascript" src = "js/edit-board.js"></script>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
-    <script type="text/javascript" src = "js/edit-board.js"></script>
     <title>Chomp</title>
 </head>
 <body>
@@ -15,63 +15,151 @@
         <button onclick="onUsernameSelection()">Log in</button>
     </div>
 
-    <div id="roomSelector" hidden>
-        <input id="roomName" type="text" placeholder="Choose a room">
-        <button onclick="join()">Join</button>
+    <!-- Show user details in this section-->
+    <div id="userDetails">
+        <h3 id="user"></h3>
     </div>
     
+    <!-- Show opponent details in this section if there is one-->
+    <div id="opponentDetails">
+        <h3 id="opponent"></h3>
+    </div>
 
-    <div id = "main" class="center" hidden> <!--Board related stuff -->
-        <div id = "bar" class = "board">
-            <table id = "chompBoard">
-                <tr id = "r1"><td id = "c1"><button class="poison_cell"></button></td>
-                <td id = "c2"><button class="cell" onclick="blockRemoval('c2');sendTransformation();"></button></td>
-                <td id = "c3"><button class="cell" onclick="blockRemoval('c3');sendTransformation();"></button></td>
-                <td id = "c4"><button class="cell" onclick="blockRemoval('c4');sendTransformation();"></button></td>
-                <td id = "c5"><button class="cell" onclick="blockRemoval('c5');sendTransformation();"></button></td>
-                <td id = "c6"><button class="cell" onclick="blockRemoval('c6');sendTransformation();"></button></td></tr>
-                <script>
-                    drawBoard();
-                </script>
-            </table>
+    <div>
+        <h3 id="turn" hidden>Your turn</h3>
+        <h3 id="opponentTurn" hidden>Opponent turn</h3>
+    </div>
+
+    <div id="roomSelector" hidden>
+        <input id="roomName" type="text" placeholder="Choose a room">
+        <button id="joinButton" onclick="join()">Join</button>
+        <h4 id="roomDisplay" hidden></h4>
+    </div>
+    
+    <div id="main" class="center" hidden> <!--Board related stuff -->
+        <div id="bar" class="board" hidden>
+            <table id="chompBoard"></table>
         </div>
     </div>
   <script>
 
     socket = io("http://localhost:3000", {autoConnect: false});
 
-    var usernameAlreadySelected = false;
     var room;
+    var userName;
+    var turn = true;
 
     socket.on('connection');
 
     socket.on('transformation', (data) => {
         document.querySelector('table').innerHTML = data;
+        document.getElementById("opponentTurn").hidden = true;
+        document.getElementById("turn").hidden = false;
+        setTurn()
     });
 
-    socket.on("connection", )
+    socket.on("opponentJoined", (data) => {
+        document.getElementById("opponent").innerHTML = "Your opponent is " + data;
+        document.getElementById("opponent").hidden = false;
+        let opponent = userName;
+        socket.emit('sendOpponent', {room, opponent});
+        showBar();
+    });
+
+    socket.on('won', () => {
+        window.alert('You Won!!');
+        disconnect();
+    });
+
+    socket.on("opponentDisconected", (data) => {
+        window.alert("The opponent disconnected");
+        disconnect();
+    });
+
+    socket.on("opponentReceived", (data) => {
+        document.getElementById("opponent").innerHTML = "Your opponent is " + data;
+        document.getElementById("opponent").hidden = false;
+        setTurn();
+        document.getElementById("opponentTurn").hidden = false;
+        document.getElementById("turn").hidden = true;
+        showBar();
+    });
 
     const sendTransformation = () => {
         const move = document.getElementById("chompBoard").innerHTML;
         socket.emit('transformation', {room, move});
+        document.getElementById("opponentTurn").hidden = false;
+        document.getElementById("turn").hidden = true;
+        setTurn();
+    }
+
+    const sendLoss = () => {
+        socket.emit('lost', room);
+        window.alert('You lost!');
+        disconnect();
     }
 
     function join() {
         room = document.getElementById("roomName").value
-        socket.emit('joinRoom', room);
+        document.getElementById("roomName").hidden = true;
+        document.getElementById("roomDisplay").innerHTML = "Joined " + room;
+        document.getElementById("roomDisplay").hidden = false;
+        document.getElementById("joinButton").hidden = true;
+        document.getElementById("turn").hidden = false;
+        let username = userName
+        socket.emit('joinRoom', {room, username});
     }
 
     function onUsernameSelection() {
-            let userName = document.getElementById("username").value;
-            usernameAlreadySelected = true;
+            userName = document.getElementById("username").value;
+            console.log(userName);
             socket.auth = { userName };
             socket.connect();
             document.getElementById("login").hidden = true;
             document.getElementById("main").hidden = false;
             document.getElementById("roomSelector").hidden = false;
-        
+            document.getElementById("user").innerHTML = userName;
     }
-  </script>
+
+    function disconnect() {
+        document.getElementById("opponent").hidden = true;
+        socket.emit("leaveRoom", room);
+        document.getElementById("roomName").value = "";
+        document.getElementById("joinButton").hidden = false;
+        document.getElementById("roomName").hidden = false;
+        document.getElementById("roomDisplay").hidden = true;
+        document.getElementById("turn").hidden = true;
+        document.getElementById("opponentTurn").hidden = true;
+        room = "";
+        document.getElementById("bar").hidden = true;
+    }
+
+    function cellClick(turn, id) {
+        console.log("Turn status: " + turn);
+        console.log(id);
+        if (turn) {
+            blockRemoval(id);
+            sendTransformation();
+        } else {
+            window.alert("Not your turn to play");
+        }
+    }
+
+    function getTurn() {
+        return turn;
+    }
+
+    function setTurn() {
+        turn = !getTurn();
+        console.log("Changed turn to " + turn);
+    }
+
+    function showBar() {
+        document.getElementById("chompBoard").innerHTML = newBoard();
+        document.getElementById("bar").hidden = false;
+    }
+
+    </script>
 </body>
 
 </html>

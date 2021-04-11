@@ -25,9 +25,25 @@ io.on('connection', (socket) => {
     socket.to(room).emit('transformation', move);
   })
 
-  socket.on("joinRoom", (data) => {
-    console.log("A user just joined: " + data);
-    socket.join(data);
+  //The server receives that a user joined a room
+  socket.on("joinRoom", ({room, username}) => {
+    console.log("A user just joined: " + room);
+    socket.join(room);
+    socket.to(room).emit('opponentJoined', username);
+  })
+
+  socket.on("leaveRoom", (room) => {
+    console.log("Someone left the room")
+    socket.leave(room);
+  })
+
+  //when a user send back their user the server lets the other know that an opponent joined
+  socket.on("sendOpponent", ({room, opponent}) => {
+    socket.to(room).emit('opponentReceived', opponent);
+  })
+
+  socket.on("lost", (room) => {
+    socket.to(room).emit('won');
   })
 }); 
 
