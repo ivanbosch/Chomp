@@ -6,6 +6,7 @@ const io = require('socket.io')(server, {
 });
 
 var rooms = new Map()
+var queue = [];
 
 //Set static files
 app.use(express.static('src'))
@@ -60,8 +61,17 @@ io.on('connection', (socket) => {
   socket.on("lost", (room) => {
     socket.to(room).emit('won');
   })
+
+  socket.on("disconnect", () => {
+    console.log("Someone disconnected");
+  })
+
 }); 
 
 server.listen(3000, () => {
   console.log('Server listening')
 });
+
+function getRndInteger(min, max) {
+  return Math.floor(Math.random() * (max - min + 1) ) + min;
+}
