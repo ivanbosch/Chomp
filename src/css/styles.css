@@ -15,21 +15,24 @@ p {
     /* bring your own prefixes */
     transform: translate(-50%, -50%) scale(.8);
 }
-.board{
+/*.board{
     border: 1px solid black;
     background: black;
-    height: 417px;
-    width: 626px;
-    /*margin: auto;
-    padding: 10px;*/
+    height: 413px;
+    width: 614px;
+}*/
+#chompBoard{
+    border: 1px solid black;
+    background: black;
 }
+
 .cell {
     border: solid #5a2d0c;
     background: #5a2d0c;
-    height: 100px;
-    width: 100px;
+    height: 150px;
+    width: 150px;
     display: inline-block;
-    margin: 0;
+    margin: 1px 1px 1px 1px;
     transition-duration: 0.4s;
     cursor: pointer;
 }
@@ -48,14 +51,81 @@ p {
 .poison_cell {
     border: solid purple;
     background: purple;
-    height: 100px;
-    width: 100px;
+    height: 150px;
+    width: 150px;
     display: inline-block;
-    margin: 0;
+    margin: 1px 1px 1px 1px;
     transition-duration: 0.4s;
     cursor: pointer;
 }
 
 .poison_cell:hover{
     border: solid red;
+}
+
+
+.border{
+    /*margin: auto;
+    width: 50%;
+    padding: 10px;
+    padding-left: 50px;*/
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    /* bring your own prefixes */
+    transform: translate(-50%, -50%) scale(2);
+    background: darkgray;
+    border: 3px solid gray;
+    width: 400px;
+    height: 300px;
+}
+.text {
+    position: absolute;
+    top: 35%;
+    left: 29%;
+}
+
+.button {
+    position: absolute;
+    top: 105px;
+    left: 25%;
+}
+
+.button:hover {
+    opacity: 0.8;
+}
+.matchDetails{
+    display: flex;
+    justify-content: space-around;
+    margin: 3%;
+}
+
+.game{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    height: 100%;
+    margin: 5% 0 10% 0;
+}
+
+.parts{
+    margin: 0 5% 0 5%;
+}
+
+#roomSelector{
+    background: darkgray;
+    border: 3px solid gray;
+    width: 400px;
+    height: 300px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(2);
+}
+
+.selector{
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

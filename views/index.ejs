@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <link rel = "stylesheet" href="css/styles.css">
     <script type="text/javascript" src = "js/board.js"></script>
     <script type="text/javascript" src = "js/edit-board.js"></script>
@@ -10,38 +11,56 @@
     <title>Chomp</title>
 </head>
 <body>
-    
-    <div id="login"> <!--Login related stuff -->
+
+    <div id="login" class="border"> <!--Login related stuff -->
+        <div class = "text">
         <input id="username" type="text" placeholder="Select a username..">
-        <button onclick="onUsernameSelection()">Log in</button>
-    </div>
+        <div class = "button">
+        <button class="btn btn-success btn-lg" type="button" onclick="onUsernameSelection()">Play</button>
+    </div></div></div>
 
     <!-- Show user details in this section-->
-    <div id="userDetails">
-        <h3 id="user"></h3>
-    </div>
-    
-    <!-- Show opponent details in this section if there is one-->
-    <div id="opponentDetails">
-        <h3 id="opponent"></h3>
-    </div>
+    <div class="game">
+        <div class = "matchDetails" >
+        <div class="parts" id="userDetails" hidden>
+            <h3 id="user"></h3>
+        </div>
 
-    <div>
-        <h3 id="turn" hidden>Your turn</h3>
-        <h3 id="opponentTurn" hidden>Opponent turn</h3>
-    </div>
 
-    <div id="roomSelector" hidden>
-        <input id="roomName" type="text" placeholder="Choose a room">
-        <button id="joinButton" onclick="join()">Join</button>
-        <h4 id="roomDisplay" hidden></h4>
-    </div>
-    
-    <div id="main" class="center" hidden> <!--Board related stuff -->
-        <div id="bar" class="board" hidden>
-            <table id="chompBoard"></table>
+        <div class="parts">
+            <h3 id="turn" hidden>Your turn</h3>
+            <h3 id="opponentTurn" hidden>Opponent turn</h3>
+        </div>
+
+
+        <!-- Show opponent details in this section if there is one-->
+        <div class="parts" id="opponentDetails">
+            <h3 id="opponent"></h3>
+        </div>
+        </div>
+        <div id="main"  hidden> <!--Board related stuff -->
+            <div id="bar" class="board" hidden>
+                <table id="chompBoard"></table>
+            </div>
         </div>
     </div>
+
+
+
+    <div id="roomSelector" hidden>
+        <div class="selector">
+            <div class = "text">
+                <input type="text" id="roomName" placeholder="Choose a room">
+            </div>
+            <div class="button" style="margin-top: 115px">
+
+                <button class="btn btn-success btn-lg" id="joinButton" onclick="join()">Join</button>
+                <button class="btn btn-success btn-lg" id="matchmaker" onclick="">Matchmake</button>
+            </div>
+        </div>
+        <h4 id="roomDisplay" hidden></h4>
+    </div>
+
   <script>
 
     socket = io("http://localhost:3000", {autoConnect: false});
@@ -107,6 +126,7 @@
         document.getElementById("roomDisplay").hidden = false;
         document.getElementById("joinButton").hidden = true;
         document.getElementById("turn").hidden = false;
+        document.getElementById("roomSelector").hidden = true;
         let username = userName
         socket.emit('joinRoom', {room, username});
     }
@@ -131,6 +151,7 @@
         document.getElementById("roomDisplay").hidden = true;
         document.getElementById("turn").hidden = true;
         document.getElementById("opponentTurn").hidden = true;
+        document.getElementById("roomSelector").hidden = false;
         room = "";
         document.getElementById("bar").hidden = true;
     }
