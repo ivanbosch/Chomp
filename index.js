@@ -6,10 +6,16 @@ const io = require('socket.io')(server, {
 });
 
 var rooms = new Map()
-var queue = [];
 
 //Set static files
-app.use(express.static('src'))
+app.use(express.static('src'));
+
+app.use(function (req, res, next) {
+  res.header('Access-Control-Allow-Origin', '')
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, authorization')
+  res.header('Access-Control-Allow-Methods', '')
+  next()
+});
 
 //Set views
 app.set("views", './views');
@@ -68,10 +74,8 @@ io.on('connection', (socket) => {
 
 }); 
 
-server.listen(3000, () => {
+const port = process.env.PORT || 3000;
+
+server.listen(port, () => {
   console.log('Server listening')
 });
-
-function getRndInteger(min, max) {
-  return Math.floor(Math.random() * (max - min + 1) ) + min;
-}

@@ -20,24 +20,24 @@
     </div></div></div>
 
     <!-- Show user details in this section-->
-    <div class="game" hidden>
+    <div class="game">
         <div class = "matchDetails" >
-            <div class="parts" id="userDetails" >
+            <div class="parts" id="userDetails" hidden>
                 <h3 id="user"></h3>
             </div>
 
-            <div class="parts">
+            <div class="parts" id="turnDetails" hidden>
                 <h3 id="turn" hidden>Your turn</h3>
                 <h3 id="opponentTurn" hidden>Opponent turn</h3>
             </div>
 
             <!-- Show opponent details in this section if there is one-->
-            <div class="parts" id="opponentDetails">
+            <div class="parts" id="opponentDetails" hidden>
                 <h3 id="opponent"></h3>
             </div>
         </div>
         <div id="main"> <!--Board related stuff -->
-            <div id="bar" class="board" >
+            <div id="bar" class="board" hidden>
                 <table id="chompBoard"></table>
             </div>
         </div>
@@ -48,7 +48,7 @@
             <div class = "text">
                 <input type="text" id="roomName" placeholder="Choose a room">
             </div>
-            <div class="button" style="margin-top: 115px">
+            <div style="margin-top: 150px">
                 <button class="btn btn-success btn-lg" id="joinButton" onclick="join()">Join</button>
             </div>
         </div>
@@ -56,7 +56,7 @@
 
   <script>
 
-    socket = io("http://localhost:3000", {autoConnect: false});
+    socket = io("https://chomp-310921.nw.r.appspot.com", {autoConnect: false});
 
     var room;
     var userName;
@@ -134,7 +134,10 @@
         socket.emit("leaveRoom", room);
         document.getElementById("roomName").value = "";
         document.getElementById("roomSelector").hidden = false;
-        document.getElementByClassName("game").hidden = true;
+        document.getElementById("bar").hidden = true;
+        document.getElementById("userDetails").hidden = true;
+        document.getElementById("turnDetails").hidden = true;
+        document.getElementById("opponentDetails").hidden = true;
         room = "";
     }
 
@@ -160,7 +163,10 @@
 
     function showBar() {
         document.getElementById("chompBoard").innerHTML = newBoard();
-        document.getElementsByClassName("game").hidden = false;
+        document.getElementById("bar").hidden = false;
+        document.getElementById("userDetails").hidden = false;
+        document.getElementById("turnDetails").hidden = false;
+        document.getElementById("opponentDetails").hidden = false;
     }
 
     </script>
